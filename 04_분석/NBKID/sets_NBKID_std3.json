@@ -1,0 +1,270 @@
+{
+ "tag": "NBKID",
+ "outcome_column": "ext__nbkid_cases",
+ "outcome_label_en": "Examinees judged 'normal B (borderline) - kidney-function management' at the National General Health Screening (urine dipstick protein trace (±); creatinine and eGFR have no normal-B band; NHIS health screening statistics DT_35007_N101, annual)",
+ "disease_en": "Trace proteinuria (dipstick ±) flagged at health screening",
+ "disease_ko": "검진 정상B(경계) 신장기능관리 판정(요단백 약양성 ±)",
+ "offset": "ext__nbkid_examinees",
+ "exclude_years": [],
+ "forced": [
+  "ext__urban_population_share",
+  "ext__physicians_per_1000",
+  "ext__sex_ratio",
+  "ext__fiscal_independence",
+  "ext__pop80_share"
+ ],
+ "negative_controls": [
+  "ext__hit_and_run_rate",
+  "ext__traffic_culture_index",
+  "ext__fires_per_10000"
+ ],
+ "offset_E_column": "E_std",
+ "offset_E_file": "NBKID_Estd3.csv",
+ "offset_E_label": "sex-and-age-standardised expected trace-proteinuria (normal B kidney-function management) judgements, 2 sexes x 15 age bands (<=19, 20-24 to 80-84, 85+) (national rates DT_35007_N102 '신장기능관리'/N099; district examinee age structure approximated from resident population x national uptake, sex totals observed from DT_35007_N098), 2011-2024",
+ "graph": "Principal adjacency graph in INLA graph format, read from the ST_GRAPH environment variable (229 districts, boundary-file order).",
+ "population_override": [
+  {
+   "year": 2023,
+   "fbd_region": "경상남도창원시",
+   "population": 1009038,
+   "source": "KOSIS DT_1YL20651E, 2023 total for the integrated Changwon city"
+  }
+ ],
+ "sensitivity_only_extra": [
+  "ext__tertiary_educated_share",
+  "ext__living_alone_elderly",
+  "ext__moderate_pa_rate",
+  "ext__public_sport_fac_per100k",
+  "ext__annual_mean_temp",
+  "ext__susp_htn_share",
+  "ext__obesity_rate",
+  "ext__scr_obesity_pstd"
+ ],
+ "sets": {
+  "S1_narrative_full": [
+   "ext__susp_dm_share",
+   "ext__smoking_rate",
+   "ext__high_risk_drinking",
+   "ext__htn_treat_rate",
+   "ext__dm_treat_rate",
+   "ext__im_specialists_per100k",
+   "ext__farm_pop_share",
+   "ext__basic_livelihood_rate",
+   "ext__screening_uptake",
+   "ext__walking_rate"
+  ],
+  "S2_core": [
+   "ext__susp_dm_share",
+   "ext__htn_treat_rate",
+   "ext__basic_livelihood_rate",
+   "ext__screening_uptake",
+   "ext__walking_rate"
+  ],
+  "S3_metabolic_risk": [
+   "ext__susp_dm_share",
+   "ext__smoking_rate",
+   "ext__high_risk_drinking"
+  ],
+  "S4_care_reach": [
+   "ext__htn_treat_rate",
+   "ext__dm_treat_rate",
+   "ext__im_specialists_per100k",
+   "ext__screening_uptake"
+  ],
+  "S5_work_deprivation": [
+   "ext__farm_pop_share",
+   "ext__basic_livelihood_rate"
+  ],
+  "S6_risk_and_care": [
+   "ext__susp_dm_share",
+   "ext__htn_treat_rate",
+   "ext__dm_treat_rate",
+   "ext__im_specialists_per100k"
+  ]
+ },
+ "transform": {
+  "ext__urban_population_share": "none",
+  "ext__physicians_per_1000": "none",
+  "ext__sex_ratio": "none",
+  "ext__fiscal_independence": "none",
+  "ext__pop80_share": "none",
+  "ext__hit_and_run_rate": "none",
+  "ext__traffic_culture_index": "none",
+  "ext__fires_per_10000": "none",
+  "ext__tertiary_educated_share": "none",
+  "ext__living_alone_elderly": "none",
+  "ext__moderate_pa_rate": "none",
+  "ext__public_sport_fac_per100k": "none",
+  "ext__annual_mean_temp": "none",
+  "ext__susp_htn_share": "none",
+  "ext__obesity_rate": "none",
+  "ext__scr_obesity_pstd": "none",
+  "ext__susp_dm_share": "none",
+  "ext__smoking_rate": "none",
+  "ext__high_risk_drinking": "none",
+  "ext__htn_treat_rate": "none",
+  "ext__dm_treat_rate": "none",
+  "ext__im_specialists_per100k": "none",
+  "ext__farm_pop_share": "none",
+  "ext__basic_livelihood_rate": "none",
+  "ext__screening_uptake": "none",
+  "ext__walking_rate": "none"
+ },
+ "expected_direction": {
+  "ext__susp_htn_share": "+",
+  "ext__susp_dm_share": "+",
+  "ext__obesity_rate": "+",
+  "ext__smoking_rate": "+",
+  "ext__high_risk_drinking": "+",
+  "ext__htn_treat_rate": "-",
+  "ext__dm_treat_rate": "-",
+  "ext__im_specialists_per100k": "-",
+  "ext__annual_mean_temp": "+",
+  "ext__farm_pop_share": "+",
+  "ext__basic_livelihood_rate": "+",
+  "ext__screening_uptake": "-",
+  "ext__walking_rate": "-"
+ },
+ "rules": {
+  "likelihood": "Poisson or negative binomial, whichever forced-adjustment-only model has the lower WAIC",
+  "set_choice": "Lowest WAIC; within 4 WAIC points, the set with fewer variables",
+  "credible": "95% CrI excludes 1",
+  "vif_drop": 10,
+  "multiverse_specs": 200,
+  "main_model_note": "Principal model = S1_narrative_full (10 district characteristics + 5 fixed adjustments); variables with VIF > 10 are removed (vif_drop).",
+  "years": [
+   2011,
+   2024
+  ],
+  "windows": {
+   "W1_2011-15": [
+    2011,
+    2015
+   ],
+   "W2_2016-19": [
+    2016,
+    2019
+   ],
+   "W3_2020-24": [
+    2020,
+    2024
+   ]
+  },
+  "covid_post_from": 2020
+ },
+ "note": "Outcome: examinees judged normal B (borderline), kidney-function management (urine dipstick protein trace) at the general health screening (NHIS, KOSIS DT_35007_N101), 229 districts, 2011-2024; denominator = examinees judged; expected counts standardised for sex and 15 age groups.",
+ "extra_columns": {
+  "ext__nbkid_cases": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "nbkid_cases"
+  ],
+  "ext__nbkid_examinees": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "nbkid_examinees"
+  ],
+  "ext__urban_population_share": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "urban_population_share"
+  ],
+  "ext__physicians_per_1000": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "physicians_per_1000"
+  ],
+  "ext__sex_ratio": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "sex_ratio"
+  ],
+  "ext__fiscal_independence": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "fiscal_independence"
+  ],
+  "ext__pop80_share": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "pop80_share"
+  ],
+  "ext__hit_and_run_rate": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "hit_and_run_rate"
+  ],
+  "ext__traffic_culture_index": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "traffic_culture_index"
+  ],
+  "ext__fires_per_10000": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "fires_per_10000"
+  ],
+  "ext__tertiary_educated_share": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "tertiary_educated_share"
+  ],
+  "ext__living_alone_elderly": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "living_alone_elderly"
+  ],
+  "ext__moderate_pa_rate": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "moderate_pa_rate"
+  ],
+  "ext__public_sport_fac_per100k": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "public_sport_fac_per100k"
+  ],
+  "ext__annual_mean_temp": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "annual_mean_temp"
+  ],
+  "ext__susp_htn_share": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "susp_htn_share"
+  ],
+  "ext__obesity_rate": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "obesity_rate"
+  ],
+  "ext__scr_obesity_pstd": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "scr_obesity_pstd"
+  ],
+  "ext__susp_dm_share": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "susp_dm_share"
+  ],
+  "ext__smoking_rate": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "smoking_rate"
+  ],
+  "ext__high_risk_drinking": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "high_risk_drinking"
+  ],
+  "ext__htn_treat_rate": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "htn_treat_rate"
+  ],
+  "ext__dm_treat_rate": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "dm_treat_rate"
+  ],
+  "ext__im_specialists_per100k": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "im_specialists_per100k"
+  ],
+  "ext__farm_pop_share": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "farm_pop_share"
+  ],
+  "ext__basic_livelihood_rate": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "basic_livelihood_rate"
+  ],
+  "ext__screening_uptake": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "screening_uptake"
+  ],
+  "ext__walking_rate": [
+   "EXT_canonical_pool_NBKID_261121.csv",
+   "walking_rate"
+  ]
+ }
+}
