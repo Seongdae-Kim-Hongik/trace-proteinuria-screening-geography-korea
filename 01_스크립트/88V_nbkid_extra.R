@@ -1,4 +1,4 @@
-# 88V_nbkid_extra.R - Additional sensitivity analyses of the principal model (10 hypothesised characteristics + 5 fixed adjustments).
+# 88V_nbkid_extra.R - Additional sensitivity analyses of the principal model (9 hypothesised characteristics + 5 fixed adjustments).
 #  (1) one sensitivity-only variable added at a time: annual mean temperature, screening-measured suspected hypertension share,
 #  survey obesity rate, period-standardised screening obesity-management share; (2) without Sejong; without districts with boundary
 #  changes (Sejong, Cheongju, Gunwi); (3) without 2020-2021; from 2015; (4) BYM2 mixing-parameter priors PC(0.5, 2/3), Beta(1,1), Jeffreys Beta(0.5,0.5).
@@ -14,7 +14,7 @@ SHP<-Sys.getenv("ST_SHP",unset="data/boundary/final.shp")
 reg<-enc2utf8(sf::st_read(SHP,quiet=TRUE)$region);DD$fbd_region<-enc2utf8(DD$fbd_region)
 DD$area<-match(DD$fbd_region,reg);stopifnot(!anyNA(DD$area))
 g<-inla.read.graph(file.path(RES,sprintf("nb_%s.graph",TAG)))
-V<-unique(c(S$sets_after_vif$S1_narrative_full,S$forced));EXTRA<-c("annual_mean_temperature_v","screening_suspected_hypertension_share_v","obesity_rate_sr","ext__scr_obesity_pstd")
+V<-unique(c(S$sets_after_vif$S1_narrative_full,S$forced));EXTRA<-c("annual_mean_temperature_v","screening_suspected_hypertension_share_v","obesity_rate_sr","ext__scr_obesity_pstd","im_specialists_per_100k");EXTRA<-setdiff(EXTRA[EXTRA%in%names(DD)],V)
 stopifnot(all(c(V,EXTRA)%in%names(DD)))
 zs<-function(x)(x-mean(x))/sd(x)
 pcp<-list(prec=list(prior="pc.prec",param=c(0.5,0.01)));CF<-list(mean=0,prec=4,mean.intercept=0,prec.intercept=0.001);bt<-function(v)sprintf("`%s`",v)

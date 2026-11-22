@@ -37,7 +37,8 @@
   "ext__annual_mean_temp",
   "ext__susp_htn_share",
   "ext__obesity_rate",
-  "ext__scr_obesity_pstd"
+  "ext__scr_obesity_pstd",
+  "ext__im_specialists_per100k"
  ],
  "sets": {
   "S1_narrative_full": [
@@ -46,7 +47,6 @@
    "ext__high_risk_drinking",
    "ext__htn_treat_rate",
    "ext__dm_treat_rate",
-   "ext__im_specialists_per100k",
    "ext__farm_pop_share",
    "ext__basic_livelihood_rate",
    "ext__screening_uptake",
@@ -67,7 +67,6 @@
   "S4_care_reach": [
    "ext__htn_treat_rate",
    "ext__dm_treat_rate",
-   "ext__im_specialists_per100k",
    "ext__screening_uptake"
   ],
   "S5_work_deprivation": [
@@ -98,12 +97,12 @@
   "ext__susp_htn_share": "none",
   "ext__obesity_rate": "none",
   "ext__scr_obesity_pstd": "none",
+  "ext__im_specialists_per100k": "none",
   "ext__susp_dm_share": "none",
   "ext__smoking_rate": "none",
   "ext__high_risk_drinking": "none",
   "ext__htn_treat_rate": "none",
   "ext__dm_treat_rate": "none",
-  "ext__im_specialists_per100k": "none",
   "ext__farm_pop_share": "none",
   "ext__basic_livelihood_rate": "none",
   "ext__screening_uptake": "none",
@@ -130,7 +129,7 @@
   "credible": "95% CrI excludes 1",
   "vif_drop": 10,
   "multiverse_specs": 200,
-  "main_model_note": "Principal model = S1_narrative_full (10 district characteristics + 4 fixed adjustments); variables with VIF > 10 are removed (vif_drop).",
+  "main_model_note": "Principal model = S1_narrative_full (9 district characteristics + 4 fixed adjustments); variables with VIF > 10 are removed (vif_drop).",
   "years": [
    2011,
    2024
@@ -154,115 +153,115 @@
  "note": "Outcome: examinees judged normal B (borderline), kidney-function management (urine dipstick protein trace) at the general health screening (NHIS, KOSIS DT_35007_N101), 229 districts, 2011-2024; denominator = examinees judged; expected counts standardised for sex and 15 age groups.",
  "extra_columns": {
   "ext__nbkid_cases": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "nbkid_cases"
   ],
   "ext__nbkid_examinees": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "nbkid_examinees"
   ],
   "ext__urban_population_share": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "urban_population_share"
   ],
   "ext__physicians_per_1000": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "physicians_per_1000"
   ],
   "ext__sex_ratio": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "sex_ratio"
   ],
   "ext__fiscal_independence": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "fiscal_independence"
   ],
   "ext__pop80_share": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "pop80_share"
   ],
   "ext__hit_and_run_rate": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "hit_and_run_rate"
   ],
   "ext__traffic_culture_index": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "traffic_culture_index"
   ],
   "ext__fires_per_10000": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "fires_per_10000"
   ],
   "ext__tertiary_educated_share": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "tertiary_educated_share"
   ],
   "ext__living_alone_elderly": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "living_alone_elderly"
   ],
   "ext__moderate_pa_rate": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "moderate_pa_rate"
   ],
   "ext__public_sport_fac_per100k": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "public_sport_fac_per100k"
   ],
   "ext__annual_mean_temp": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "annual_mean_temp"
   ],
   "ext__susp_htn_share": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "susp_htn_share"
   ],
   "ext__obesity_rate": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "obesity_rate"
   ],
   "ext__scr_obesity_pstd": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "scr_obesity_pstd"
   ],
+  "ext__im_specialists_per100k": [
+   "EXT_canonical_pool_NBKID.csv",
+   "im_specialists_per100k"
+  ],
   "ext__susp_dm_share": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "susp_dm_share"
   ],
   "ext__smoking_rate": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "smoking_rate"
   ],
   "ext__high_risk_drinking": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "high_risk_drinking"
   ],
   "ext__htn_treat_rate": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "htn_treat_rate"
   ],
   "ext__dm_treat_rate": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "dm_treat_rate"
   ],
-  "ext__im_specialists_per100k": [
-   "EXT_canonical_pool_NBKID_261121.csv",
-   "im_specialists_per100k"
-  ],
   "ext__farm_pop_share": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "farm_pop_share"
   ],
   "ext__basic_livelihood_rate": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "basic_livelihood_rate"
   ],
   "ext__screening_uptake": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "screening_uptake"
   ],
   "ext__walking_rate": [
-   "EXT_canonical_pool_NBKID_261121.csv",
+   "EXT_canonical_pool_NBKID.csv",
    "walking_rate"
   ]
  }

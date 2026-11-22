@@ -48,7 +48,24 @@ P.loc[_g & (P.year == 2023), "im_specialists_per100k"] = (float(_v.loc[2022]) + 
 P["scr_obesity_pstd"] = np.nan
 for a_, b_ in ((2011, 2018), (2019, 2024)):
     m_ = P.year.between(a_, b_); x_ = P.loc[m_, "scr_obesity_share"]; P.loc[m_, "scr_obesity_pstd"] = (x_ - x_.mean()) / x_.std()
-P.to_csv(os.path.join(PAN, "EXT_canonical_pool_NBKID_261121.csv"), index=False, encoding="utf-8-sig"); print("풀 v3", P.shape, "군위 2023 im =", float(P.loc[_g & (P.year == 2023), "im_specialists_per100k"].iloc[0]))
+P.to_csv(os.path.join(PAN, "EXT_canonical_pool_NBKID_before_corrections.csv"), index=False, encoding="utf-8-sig"); print("풀 v3", P.shape, "군위 2023 im =", float(P.loc[_g & (P.year == 2023), "im_specialists_per100k"].iloc[0]))
+import glob as _glob
+S3P = os.environ.get("ST_IM_PARQUET") or (_glob.glob(os.path.join(os.path.expanduser("~"), "Library", "CloudStorage", "GoogleDrive-*", "*", "S.K", "G.Downloads", "독립변수 2", "국민건강결과_최종.parquet")) or [""])[0]
+S3 = pd.read_parquet(S3P, columns=["year", "region", "내과전문의"]); S3["fbd_region"] = S3.region.map(NFC)
+Q = P.merge(S3[["year", "fbd_region", "내과전문의"]], on=["year", "fbd_region"], how="left", validate="one_to_one"); assert Q["내과전문의"].notna().all()
+cnt = Q.set_index(["fbd_region", "year"])["내과전문의"].astype(float).copy()
+for r_ in cnt.index.get_level_values(0).unique():
+    cnt.loc[(r_, 2018)] = (cnt.loc[(r_, 2017)] + cnt.loc[(r_, 2019)]) / 2
+_gw = [r_ for r_ in cnt.index.get_level_values(0).unique() if "군위" in r_][0]; assert cnt.loc[(_gw, 2023)] == 0.0
+cnt.loc[(_gw, 2023)] = (cnt.loc[(_gw, 2022)] + cnt.loc[(_gw, 2024)]) / 2
+P["im_specialists_per100k_v3_double"] = P["im_specialists_per100k"]
+P["im_specialists_per100k"] = [cnt.loc[(r_, y_)] / pop_ * 1e5 for r_, y_, pop_ in zip(P.fbd_region, P.year, P.population)]
+_sj = P.fbd_region.str.contains("세종"); _f13 = float(P.loc[_sj & (P.year == 2013), "farm_pop_share"].iloc[0])
+P["farm_pop_share_v3_interp"] = P["farm_pop_share"]; P.loc[_sj & (P.year >= 2014), "farm_pop_share"] = _f13
+_gn = P.fbd_region.str.contains("강남구") & (P.year == 2011)
+print("v4 내과(강남 2011) =", round(float(P.loc[_gn, "im_specialists_per100k"].iloc[0]), 2), "/ 세종 농가 2014–24 =", round(_f13, 2), "/ 전국 중앙값", P.groupby("year").im_specialists_per100k.median().round(1).to_dict())
+P.drop(columns=["im_specialists_per100k_v3_double", "farm_pop_share_v3_interp"]).to_csv(os.path.join(PAN, "EXT_canonical_pool_NBKID.csv"), index=False, encoding="utf-8-sig")
+P[["year", "fbd_region", "population", "im_specialists_per100k_v3_double", "im_specialists_per100k", "farm_pop_share_v3_interp", "farm_pop_share"]].to_csv(os.path.join(HERE, "checks", "out", "v4_corrections_im_farm.csv"), index=False, encoding="utf-8-sig")
 con.close(); h1 = sha(DB); m1 = os.stat(DB).st_mtime
 open(os.path.join(RG, "S0_base_hash.txt"), "w").write(f"기준 SQLite {DB}\n전 sha256={h0} mtime={m0}\n후 sha256={h1} mtime={m1}\n같음={h0 == h1 and m0 == m1}\n" + "\n".join(f"{a}<-{b} 태그 {c}개(대표 {d}) 태그 간 최대차 {e}" for a, b, c, d, e in log) + "\n")
 print("기준 파일 해시 전후 같음:", h0 == h1 and m0 == m1)

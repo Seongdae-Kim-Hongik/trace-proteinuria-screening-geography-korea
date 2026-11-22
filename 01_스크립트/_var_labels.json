@@ -1066,5 +1066,11 @@
   "key": "farm_population_share_v",
   "label_en": "Farm-household population share (%)",
   "label_ko": "농가인구 비율"
+ },
+ {
+  "column": "ext__scr_obesity_pstd",
+  "key": "ext__scr_obesity_pstd",
+  "label_en": "Screening obesity management share, period-standardised (%)",
+  "label_ko": "검진 정상B 비만관리 비율(기간 표준화)"
  }
 ]

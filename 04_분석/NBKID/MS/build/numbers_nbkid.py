@@ -7,11 +7,10 @@ HERE = os.path.dirname(os.path.abspath(__file__)); B = os.path.abspath(os.path.j
 RS = lambda v="std3": os.path.join(B, f"results_{v}"); NFC = lambda s: unicodedata.normalize("NFC", str(s))
 SHP = os.environ.get("ST_SHP", os.path.join("data", "boundary", "final.shp"))
 VARS = {"susp_dm": "screening_suspected_diabetes_share_v", "smoking_rate": "current_smoking_rate", "high_risk_drinking": "high_risk_drinking_rate",
-        "htn_treat": "hypertension_treatment_rate_v", "dm_treat": "diabetes_treatment_rate_v", "im_specialists": "im_specialists_per_100k",
-        "farm_share": "farm_population_share_v", "basic_livelihood_rate": "basic_livelihood_rate", "screening_uptake": "screening_uptake", "walking_rate": "walking_practice_rate",
+        "htn_treat": "hypertension_treatment_rate_v", "dm_treat": "diabetes_treatment_rate_v",         "farm_share": "farm_population_share_v", "basic_livelihood_rate": "basic_livelihood_rate", "screening_uptake": "screening_uptake", "walking_rate": "walking_practice_rate",
         "urban_population_share": "urban_population_share", "physicians_per_1000": "physicians_per_1000", "sex_ratio": "sex_ratio", "fiscal_independence": "fiscal_independence", "pop80_share": "pop80_share"}
 SVARS = {"temperature": "annual_mean_temperature_v", "susp_htn": "screening_suspected_hypertension_share_v", "obesity_rate": "obesity_rate_sr", "scr_obesity": "ext__scr_obesity_pstd"}
-HYP = list(VARS)[:10]; ROB = ["walking_rate", "basic_livelihood_rate"]
+HYP = list(VARS)[:9]; ROB = ["walking_rate", "basic_livelihood_rate"]
 def tab(f, v="std3"):
     d = pd.read_csv(os.path.join(RS(v), f)); d["cov"] = d["cov"].astype(str); return d
 def get(d, c):
@@ -41,7 +40,11 @@ mo = pd.read_csv(os.path.join(RS(), "S11b_moran_yearly_EB.csv")); N["moran_min"]
 _hy = pd.read_csv(os.path.join(RS(), "S3_main_hyper.csv")); _ph = _hy[_hy.hyperpar.str.startswith("Phi")].iloc[0]; N["phi_ci"] = [round(_ph["mean"], 2), round(_ph["X0.025quant"], 2), round(_ph["X0.975quant"], 2)]
 _cv = pd.read_csv(os.path.join(RS(), "S5_covid.csv")); _cp = _cv[_cv["cov"] == "post"].iloc[0]; N["covid_post"] = [float(_cp.IRR), float(_cp.lo), float(_cp.hi)]
 _rf = pd.read_csv(os.path.join(RS(), "S1b_refit_twice.csv")).iloc[0]; N["refit_waic"] = [float(_rf.WAIC1), float(_rf.WAIC2)]
-N["kendall_w"] = round(float(pd.read_csv(os.path.join(RS(), "S12_persistence.csv")).iloc[0].kendall_W), 2)
+KP = pd.read_csv(os.path.join(RS(), "S12_persistence.csv")).iloc[0]; N["kendall_w"] = round(float(KP.kendall_W), 2); N["kendall_perm_p"] = float(KP.perm_p); N["kendall_B"] = int(KP.B)
+_P = pd.read_csv(os.path.join(B, "panel_NBKID_std3.csv")); _X = _P[list(VARS.values())].astype(float); _X = (_X - _X.mean()) / _X.std(); _vif = {}
+for _c in _X.columns:
+    _y = _X[_c].values; _Z = np.column_stack([np.ones(len(_X)), _X.drop(columns=_c).values]); _b = np.linalg.lstsq(_Z, _y, rcond=None)[0]; _vif[_c] = 1 / (((_y - _Z @ _b) ** 2).sum() / ((_y - _y.mean()) ** 2).sum())
+N["vif_max"] = round(max(_vif.values()), 2); N["vif_max_var"] = max(_vif, key=_vif.get); N["n_hyp"] = len(HYP); N["n_main"] = len(VARS)
 Y = P.pivot_table(index="fbd_region", columns="year", values="SIR"); N["rho_2011_2024"] = round(spearmanr(Y[2011], Y[2024]).correlation, 2)
 import geopandas as gpd
 G = open(os.environ["ST_GRAPH"]).read().split("\n"); nreg = int(G[0]); nb = {}
@@ -78,7 +81,7 @@ N["mv"] = {k: [round(float(MV[MV["cov"] == VARS[k]].cred_frac.iloc[0]), 3), roun
 for t in ("KH_typeI", "KH_typeII", "KH_typeIII", "KH_typeIV"):
     f = "S9_typeI_IRR.csv" if t == "KH_typeI" else f"S43_part_{t}.csv"
     d = tab(f); N[t] = {k: get(d, VARS[k]) for k in VARS}; N[t + "_waic"] = float(d.WAIC.iloc[0])
-d = pd.read_csv(os.path.join(RS(), "S50_resid_moran_by_spec.csv")).set_index("spec"); N["rm_spec"] = {s: round(float(d.loc[s, "resid_moran_I"]), 2) for s in d.index}
+d = pd.read_csv(os.path.join(RS(), "S50_resid_moran_by_spec.csv")).set_index("spec"); N["rm_waic"] = float(d.loc["principal", "WAIC"]); N["rm_spec"] = {s: round(float(d.loc[s, "resid_moran_I"]), 2) for s in d.index}
 for a in ("E1_lag1", "E2_lag2", "D1_spatial_plus", "C4_sido_year_iid", "C1_poisson_lognormal", "G1_kchs_ma3"):
     d = tab(f"S41_part_{a}.csv"); N[a] = {k: get(d, VARS[k]) for k in VARS if (d["cov"] == VARS[k]).any()}
 for a in ("no_spatial", "iid_only", "icar_besag", "RSR"):
@@ -119,7 +122,7 @@ for t2, key in (("KIDS", "rho_kids"), ("NBBP", "rho_nbbp")):
 S6r = pd.read_csv(os.path.join(RS(), "S6_spatial_RR.csv")); N["rr_s"] = [round(S6r.RR.min(), 2), round(S6r.RR.max(), 2), round(S6r.RR.quantile(.1), 2), round(S6r.RR.quantile(.9), 2)]
 EH = pd.read_csv(os.path.join(RS(), "S11_ehsa_summary.csv")); N["ehsa"] = {r.category: int(r.n) for r in EH.itertuples()}
 WF = pd.read_csv(os.path.join(RS(), "S4b_window_fit.csv")); N["win_phi"] = {r.window: [round(r.phi, 2), round(r.phi_lo, 2), round(r.phi_hi, 2)] for r in WF.itertuples()}; N["win_hot"] = {r.window: int(r.n_hotspot) for r in WF.itertuples()}; N["win_cold"] = {r.window: int(r.n_coldspot) for r in WF.itertuples()}
-N["n_hyp"] = 13; N["chance_n"] = round(13 * 0.05, 2); N["mv_n"] = 200
+N["chance_n"] = round(N["n_hyp"] * 0.05, 2); N["mv_n"] = 200
 IT = pd.read_csv(os.path.join(RS(), "S4_interaction.csv")); IT["cov"] = IT["cov"].astype(str)
 N["int"] = {f"{r.cov}|{r.window}": [round(float(r.IRR_ratio), 3), round(float(r.lo), 3), round(float(r.hi), 3)] for r in IT.itertuples()}
 S60 = pd.read_csv(os.path.join(RS(), "S60_extra.csv")); INV = {**{v: k for k, v in VARS.items()}, **{v: k for k, v in SVARS.items()}}
