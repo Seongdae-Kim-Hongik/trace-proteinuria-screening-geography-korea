@@ -47,7 +47,7 @@ KP = pd.read_csv(os.path.join(RS(), "S12_persistence.csv")).iloc[0]; N["kendall_
 _P = pd.read_csv(os.path.join(B, "panel_NBKID_std3.csv")); _X = _P[list(VARS.values())].astype(float); _X = (_X - _X.mean()) / _X.std(); _vif = {}
 for _c in _X.columns:
     _y = _X[_c].values; _Z = np.column_stack([np.ones(len(_X)), _X.drop(columns=_c).values]); _b = np.linalg.lstsq(_Z, _y, rcond=None)[0]; _vif[_c] = 1 / (((_y - _Z @ _b) ** 2).sum() / ((_y - _y.mean()) ** 2).sum())
-N["vif_max"] = rnd(max(_vif.values()), 2); N["vif_max_var"] = max(_vif, key=_vif.get); N["n_hyp"] = len(HYP); N["n_main"] = len(VARS)
+N["vif_max"] = float(max(_vif.values())); N["vif_max_var"] = max(_vif, key=_vif.get); N["n_hyp"] = len(HYP); N["n_main"] = len(VARS)
 Y = P.pivot_table(index="fbd_region", columns="year", values="SIR"); N["rho_2011_2024"] = rnd(spearmanr(Y[2011], Y[2024]).correlation, 2); _rg = np.random.default_rng(20261019); _yy = Y[[2011, 2024]].dropna().values; _bb = [spearmanr(_yy[_i, 0], _yy[_i, 1]).correlation for _i in (_rg.integers(0, len(_yy), len(_yy)) for _ in range(2000))]; N["rho_2011_2024_ci"] = [rnd(float(np.percentile(_bb, 2.5)), 2), rnd(float(np.percentile(_bb, 97.5)), 2)]
 import geopandas as gpd
 G = open(os.environ["ST_GRAPH"]).read().split("\n"); nreg = int(G[0]); nb = {}

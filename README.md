@@ -2,7 +2,7 @@
 
 Analysis code for a study of where the "normal B (borderline), kidney-function management" judgement (urine dipstick protein trace) is concentrated across the 229 districts of South Korea at the national general health screening, 2011-2024, and whether district kidney risk factors explain the pattern.
 
-This code is released under the MIT licence. Version 1.0.7. An archived copy of each version is deposited on Zenodo (version 1.0.7: https://doi.org/10.5281/zenodo.24444193; all versions: concept record https://doi.org/10.5281/zenodo.24419401).
+This code is released under the MIT licence. Version 1.0.8. An archived copy of each version is deposited on Zenodo (version 1.0.8: https://doi.org/10.5281/zenodo.24450374; all versions: concept record https://doi.org/10.5281/zenodo.24419401).
 
 ## Model
 
