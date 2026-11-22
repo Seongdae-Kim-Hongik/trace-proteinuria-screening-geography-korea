@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # make_pool_sets_nbkid.py - Writes the model-settings files sets_NBKID_<version>.json (std3, s577, s2, s8, sc, sp), fixed and hashed
-#  before the reported models were fitted (earlier revisions: README, Set choice),
+#  recorded in the analysis log (earlier revisions: README, Set choice),
 #  and their SHA-256 hashes (sets_NBKID_hash_before_fit.txt). Principal set S1_narrative_full = 9 hypothesised district characteristics;
 #  5 fixed adjustments; 3 negative controls; sensitivity-only variables (not in the principal model) listed in sensitivity_only_extra.
 #  Input: 02_패널/EXT_canonical_pool_NBKID_261121.csv; the two comparison-outcome panels (panel_<TAG>.csv, 02_패널/<TAG>_Estd.csv) are only read for a check.
@@ -56,14 +56,14 @@ def make():
      "disease_en": "Trace proteinuria (dipstick ±) flagged at health screening",
      "disease_ko": "검진 정상B(경계) 신장기능관리 판정(요단백 약양성 ±)",
      "pathway": "trace-proteinuria epidemiology set (measured metabolic risk, treatment reach, agricultural work, deprivation, screening selection, walking)",
-     "selection_basis": "Outcome selected by prespecified spatial screening criteria (Moran's I, persistence, urban-rural R2, BYM2 mixing parameter)",
+     "selection_basis": "Outcome selected by spatial screening criteria (Moran's I, persistence, urban-rural R2, BYM2 mixing parameter)",
      "offset": "ext__nbkid_examinees", "exclude_years": [],
      "forced": X(FORCED), "negative_controls": X(NEG),
      "offset_E_column": "E_std", "offset_E_file": "NBKID_Estd3.csv", "offset_E_label": LAB_M,
      "graph": "593-edge contact graph, ST_GRAPH=04_분석/NBKID/graph_593.graph",
      "population_override": pov, "sensitivity_only_extra": X(SENS),
      "version": "std3 trace-proteinuria epidemiology set (measured glucose risk, smoking and drinking, treatment reach, agricultural work, deprivation, screening selection, walking), 2011-2024; temperature, suspected hypertension and obesity sensitivity only",
-     "fixed_on": "fixed and hashed before the reported (v5) models were fitted; earlier sets were revised after collinearity, series-break and data-quality checks",
+     "fixed_on": "hashed (SHA-256) and recorded in the analysis log; earlier sets were revised after collinearity, series-break and data-quality checks",
      "sets": SETS, "transform": {XK(v): "none" for v in FORCED + NEG + SENS + HYP},
      "expected_direction": {XK(k): v for k, v in EXPECT.items()},
      "rules": {"likelihood": "Poisson or negative binomial, whichever forced-adjustment-only model has the lower WAIC", "set_choice": "Lowest WAIC; within 4 WAIC points, the set with fewer variables", "credible": "95% CrI excludes 1", "vif_drop": 10, "multiverse_specs": 200,
@@ -84,5 +84,5 @@ H = []
 for ver, j in OUT.items():
     fp = os.path.join(HERE, f"sets_NBKID_{ver}.json"); json.dump(j, open(fp, "w"), ensure_ascii=False, indent=1)
     H.append(f"sets_NBKID_{ver}.json sha256={hashlib.sha256(open(fp, 'rb').read()).hexdigest()}")
-open(os.path.join(HERE, "sets_NBKID_hash_before_fit.txt"), "w").write("# NBKID sets json SHA-256, written before the reported models were fitted\n" + "\n".join(H) + "\n")
+open(os.path.join(HERE, "sets_NBKID_hash_before_fit.txt"), "w").write("# NBKID sets json SHA-256, recorded in the analysis log\n" + "\n".join(H) + "\n")
 print("\n".join(H))

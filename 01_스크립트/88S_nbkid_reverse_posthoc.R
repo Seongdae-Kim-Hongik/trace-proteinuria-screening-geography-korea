@@ -1,4 +1,4 @@
-# 88S_nbkid_reverse_posthoc.R - Post hoc analyses (after results were seen) of the association opposite to the prespecified direction (public assistance recipient rate).
+# 88S_nbkid_reverse_posthoc.R - Post hoc analyses (after results were seen) of the association opposite to the hypothesised direction (public assistance recipient rate).
 #  P0 principal model; P1 plus sensitivity-only variables; P2 alone with fixed adjustments; P3 plus log population density; P4 between/within
 #  decomposition; P6 without physicians; P7 2013-2024 only; P8 expected counts conditional on the kidney-disease-suspected judgement; P9 without uptake.
 #  Usage: TAG=NBKID ST_VER=std3 ST_GRAPH=<graph> Rscript 88S_nbkid_reverse_posthoc.R. Output: results_std3/S46_nbkid_posthoc.csv

@@ -30,7 +30,7 @@ def mapax(ax, arrow=True):
 def save(fig, k, dpi):
     p = os.path.join(FIG, f"Fig{k}_preview.png"); fig.savefig(p, dpi=dpi, facecolor="white"); plt.close(fig)
     im = Image.open(p).convert("RGB"); im.save(p, dpi=(dpi, dpi)); im.save(os.path.join(OUTF, f"Fig{k}.tif"), dpi=(dpi, dpi), compression="tiff_lzw"); return im.size
-BR = [0, 0.80, 0.90, 1.00, 1.11, 1.25, 9]; LB = ["<0.80", "0.80-0.89", "0.90-0.99", "1.00-1.10", "1.11-1.24", "≥1.25"]
+BR = [0, 0.80, 0.90, 1.00, 1.11, 1.25, 9]; LB = ["<0.80", "0.80\u20130.89", "0.90\u20130.99", "1.00\u20131.10", "1.11\u20131.24", "≥1.25"]
 PAL = ["#2166AC", "#67A9CF", "#D1E5F0", "#FDDBC7", "#EF8A62", "#B2182B"]
 
 # Fig 1
@@ -39,7 +39,7 @@ ax = fig.add_axes([0.0, 0.16, 0.54, 0.74]); gg = G.merge(GI[["sigungu_cd", "SIR"
 gg.plot(ax=ax, column="SIR", cmap=ListedColormap(PAL), norm=BoundaryNorm(BR, len(PAL)), edgecolor="#9a9a9a", linewidth=LW); mapax(ax)
 gg[gg.cls == "cold"].boundary.plot(ax=ax, color="black", linewidth=0.9, linestyle=(0, (1.5, 1.0))); gg[gg.cls == "hot"].boundary.plot(ax=ax, color="black", linewidth=1.6); letter(fig, ax, "A")
 h = [Patch(facecolor=c, edgecolor="#777777", linewidth=0.5, label=l) for c, l in zip(PAL, LB)] + [Patch(facecolor="none", edgecolor="black", linewidth=1.6, label="Hot spot"), Patch(facecolor="none", edgecolor="black", linewidth=0.9, linestyle=(0, (1.5, 1.0)), label="Cold spot")]
-ax.legend(handles=h, title="Standardised ratio, 2011-2024", loc="upper center", bbox_to_anchor=(0.5, 0.0), ncol=4, frameon=False, columnspacing=0.7, handlelength=1.2)
+ax.legend(handles=h, title="Standardised ratio, 2011\u20132024", loc="upper center", bbox_to_anchor=(0.5, 0.0), ncol=4, frameon=False, columnspacing=0.7, handlelength=1.2)
 b = fig.add_axes([0.66, 0.24, 0.32, 0.56]); yb = sorted(int(k) for k in N["rate"]); GT = N["gate"]
 b.plot(yb, [N["rate"][str(y)] for y in yb], color="#B2182B", marker="o", ms=3.2, label="Trace judgement")
 b.plot(yb, [GT["tr"][str(y)] for y in yb], color="#2166AC", marker="s", ms=3.0, ls="--", label="Trace in dipstick distribution")
@@ -62,14 +62,14 @@ s2 = save(fig, 2, 600)
 
 LAB = {"walking_rate": "Walking", "basic_livelihood_rate": "Public assistance\nrecipients"}
 ORD = list(LAB); BW = lambda v, p: N["bw"].get(f"{v}|{p}")
-MOD = [("Principal model", lambda v: N["main"][v], "#000000", "o"),
-       ("Knorr-Held type I", lambda v: N["KH_typeI"][v], "#2166AC", "^"), ("Knorr-Held type II", lambda v: N["KH_typeII"][v], "#2166AC", "P"),
+MOD = [("Knorr-Held type I", lambda v: N["KH_typeI"][v], "#2166AC", "^"), ("Knorr-Held type II", lambda v: N["KH_typeII"][v], "#2166AC", "P"),
        ("Knorr-Held type III", lambda v: N["KH_typeIII"][v], "#2166AC", "*"), ("Knorr-Held type IV", lambda v: N["KH_typeIV"][v], "#2166AC", "D"),
        ("Restricted spatial regression", lambda v: N["RSR"][v], "#B2182B", "X"), ("Spatial+", lambda v: N["D1_spatial_plus"][v], "#B2182B", "8"),
        ("Between districts", lambda v: BW(v, "between"), "#4D9221", "<"), ("Within districts", lambda v: BW(v, "within"), "#4D9221", ">"),
-       ("Population-based expected", lambda v: N["sp"][v], "#7F7F7F", "d"),
        ("Suspected kidney disease", lambda v: N["nco"]["KIDS|" + v], "#8C6BB1", "s"), ("Borderline blood pressure", lambda v: N["nco"]["NBBP|" + v], "#8C6BB1", "v")]
-vals = [t for v in ORD for j in range(len(MOD)) for t in [MOD[j][1](v)] if t]; lo_all = min(t[1] for t in vals); hi_all = max(t[2] for t in vals)
+from decimal import Decimal as _Dec, ROUND_HALF_UP as _HU
+H3 = lambda x: str(_Dec(repr(float(x))).quantize(_Dec("0.001"), rounding=_HU))
+vals = [t for v in ORD for j in range(len(MOD)) for t in [MOD[j][1](v)] if t] + [N["main"][v] for v in ORD]; lo_all = min(t[1] for t in vals) - 0.03; hi_all = max(t[2] for t in vals) + 0.03
 fig, ax = plt.subplots(figsize=(W, 5.6)); fig.subplots_adjust(left=0.22, right=0.98, top=0.98, bottom=0.40)
 off = np.linspace(-0.38, 0.38, len(MOD))
 T1 = pd.read_csv(os.path.join(RES, "S9_typeI_IRR.csv")); T1C = dict(zip(T1["cov"], T1["cred"]))
@@ -79,18 +79,21 @@ for i, v in enumerate(ORD):
         r = f(v)
         if not r: continue
         e, lo, hi = r; cr = lo > 1 or hi < 1 or (lab == "Knorr-Held type I" and bool(T1C.get(VARS_N[v]))); ax.plot([lo, hi], [i + o] * 2, color=col, lw=1.1); ax.plot(e, i + o, marker=mk, mfc=col if cr else "white", mec=col, ms=5, mew=1.0, ls="none")
+        if e >= 1: ax.text(hi + 0.002, i + o, H3(e), ha="left", va="center", fontsize=7, color=col, bbox=dict(fc="white", ec="none", pad=0.4), zorder=5)
+        else: ax.text(lo - 0.002, i + o, H3(e), ha="right", va="center", fontsize=7, color=col, bbox=dict(fc="white", ec="none", pad=0.4), zorder=5)
+    pm = N["main"][v][0]; ax.plot([pm, pm], [i - 0.46, i + 0.46], color="#000000", lw=1.1, ls="--")
 ax.axvline(1, color="#404040", lw=1.0, ls=":"); ax.set_yticks(range(len(ORD))); ax.set_yticklabels([LAB[v] for v in ORD]); ax.invert_yaxis()
-a0 = np.floor((lo_all - 0.004) * 50) / 50; a1 = np.ceil((hi_all + 0.004) * 50) / 50; xt = list(np.round(np.arange(a0, a1 + 0.0001, 0.02), 2))
+a0 = np.floor((lo_all - 0.004) * 50) / 50; a1 = np.ceil((hi_all + 0.004) * 50) / 50; xt = list(np.round(np.arange(a0, a1 + 0.0001, 0.02), 2)); xt = xt if len(xt) <= 12 else list(np.round(np.arange(np.floor(a0 * 25) / 25, a1 + 0.04 - 0.0001, 0.04), 2))
 ax.set_xlim(xt[0], xt[-1]); ax.set_xticks(xt); ax.set_xticklabels([f"{x:.2f}" for x in xt]); ax.minorticks_off()
 ax.set_xlabel("Rate ratio per 1 standard deviation (95% credible interval)"); ax.spines[["top", "right"]].set_visible(False)
-ax.legend(handles=[Line2D([0], [0], color=c_, marker=m, lw=1.1, ms=5, mfc=c_, mec=c_, label=l) for l, _, c_, m in MOD] + [Line2D([0], [0], color="#404040", marker="o", lw=0, ms=5, mfc="#404040", label="Filled: 95% CrI excludes 1"), Line2D([0], [0], color="#404040", marker="o", lw=0, ms=5, mfc="white", mec="#404040", label="Open: 95% CrI includes 1")], loc="upper center", bbox_to_anchor=(0.40, -0.16), ncol=3, frameon=False)
+ax.legend(handles=[Line2D([0], [0], color=c_, marker=m, lw=1.1, ms=5, mfc=c_, mec=c_, label=l) for l, _, c_, m in MOD] + [Line2D([0], [0], color="#000000", lw=1.1, ls="--", label="Principal model (Table 2)"), Line2D([0], [0], color="#404040", marker="o", lw=0, ms=5, mfc="#404040", label="Filled: 95% CrI excludes 1"), Line2D([0], [0], color="#404040", marker="o", lw=0, ms=5, mfc="white", mec="#404040", label="Open: 95% CrI includes 1")], loc="upper center", bbox_to_anchor=(0.40, -0.16), ncol=3, frameon=False)
 s3 = save(fig, 3, 600)
 for k, s in ((1, s1), (2, s2), (3, s3)): print(f"Fig{k}: {s[0]}x{s[1]} px = {s[0]/600*25.4:.0f} x {s[1]/600*25.4:.0f} mm @ 600 dpi")
 
 FT = pd.read_csv(os.path.join(RES, "S20_fitted_main.csv")); FT["mu"] = FT.E * FT.fitted_RR
 A = FT.groupby("fbd_region").agg(cases=("cases", "sum"), E=("E", "sum"), mu=("mu", "sum")).reset_index(); A["obs"] = A.cases / A.E; A["fit"] = A.mu / A.E; A["res"] = A.cases / A.mu
 GG = G.merge(GI[["sigungu_cd"]].assign(fbd_region=pd.read_csv(os.path.join(HERE, "gi_nbkid.csv")).fbd_region), left_on="cd", right_on="sigungu_cd", how="left").merge(A, on="fbd_region", how="left"); assert GG.obs.notna().all()
-RBR2 = [0, 0.95, 0.98, 1.00, 1.02, 1.05, 9]; RLB = ["<0.95", "0.95-0.97", "0.98-0.99", "1.00-1.01", "1.02-1.04", "≥1.05"]
+RBR2 = [0, 0.95, 0.98, 1.00, 1.02, 1.05, 9]; RLB = ["<0.95", "0.95\u20130.97", "0.98\u20130.99", "1.00\u20131.01", "1.02\u20131.04", "≥1.05"]
 fig = plt.figure(figsize=(W, 4.6)); P3 = [[0.00, 0.20, 0.33, 0.66], [0.335, 0.20, 0.33, 0.66], [0.67, 0.20, 0.33, 0.66]]
 for k, (col, br, lb, ch) in enumerate((("obs", BR, LB, "A"), ("fit", BR, LB, "B"), ("res", RBR2, RLB, "C"))):
     a = fig.add_axes(P3[k]); GG.plot(ax=a, column=col, cmap=ListedColormap(PAL), norm=BoundaryNorm(br, len(PAL)), edgecolor="#9a9a9a", linewidth=0.15); mapax(a, arrow=(k == 0)); letter(fig, a, ch)

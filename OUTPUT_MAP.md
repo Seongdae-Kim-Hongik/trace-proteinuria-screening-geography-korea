@@ -7,7 +7,7 @@ Result tables are written to `04_분석/NBKID/results_<version>/` (principal ver
 | `99G_nbkid_judgement_gate.py` | results_gate/S0_judgement_national.csv, S0_judgement_age_sex.csv, S0_judgement_province.csv, S0_district_rankcorr.csv | Judgement check (Supplementary) |
 | `99NK2_build_Estd3_nbkid.py` | 02_패널/NBKID_Estd3.csv | Counts, denominators and expected counts |
 | `build_pool_from_sqlite_nbkid.py` | 02_패널/EXT_canonical_pool_NBKID_261121.csv | Covariate pool |
-| `make_pool_sets_nbkid.py` | 04_분석/NBKID/sets_NBKID_<version>.json, sets_NBKID_hash_before_fit.txt | Model settings, fixed and hashed before the reported models were fitted |
+| `make_pool_sets_nbkid.py` | 04_분석/NBKID/sets_NBKID_<version>.json, sets_NBKID_hash_before_fit.txt | Model settings, hashed (SHA-256) and recorded in the analysis log |
 | `80_build_disease_panel_v.py` | panel_NBKID_<version>.csv, panel_META_*, config_* | Analytic panel, imputation counts, VIF |
 | `81_fit_inla.R` | results_<version>/S1_likelihood.csv, S3_main_IRR.csv, S3_main_fit.csv, S3_negcontrol.csv, S6_spatial_RR.csv, S8_residual_moran.csv, S4_window_IRR.csv, S5_covid.csv, S6_moran_year.csv, S7_multiverse_*.csv, S9_typeI_IRR.csv, S10_offset_sensitivity_IRR.csv | Principal model, period models, multiverse |
 | `81R_nbkid_refit_binom.R` | S1b_refit_twice.csv, S1c_likelihood5.csv, S1c_likelihood5_coef.csv, S0_repro_meta.csv | Reproducibility and five likelihoods |
@@ -22,3 +22,4 @@ Result tables are written to `04_분석/NBKID/results_<version>/` (principal ver
 | `89g_sens_combine_nbkid.py` | S41_retention_by_cov.csv, S41_noise_rubin.csv, S41_nco_detail.csv, S41_evalues.csv, S41_leaveout_ranges.csv | Sensitivity summary |
 | `numbers_nbkid.py` | MS/build/numbers_nbkid.json, gi_nbkid.csv | Every number in the manuscript and supplementary tables |
 | `figs_nbkid.py` | MS/build/figs/Fig1-Fig3 | Figures 1-3 |
+| `04_분석/NBKID/checks/B240_person_axis.py` | `checks/out/B240_person_axis_*.csv`, `MS/build/person_axis_nbkid.json` | National sex and age rates, sex-by-age rate ratios and the directly age-standardised rate (2015 examinee standard) reported in Results and Table S1 |
