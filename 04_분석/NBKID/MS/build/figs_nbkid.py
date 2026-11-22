@@ -79,7 +79,7 @@ for i, v in enumerate(ORD):
         r = f(v)
         if not r: continue
         e, lo, hi = r; cr = lo > 1 or hi < 1 or (lab == "Knorr-Held type I" and bool(T1C.get(VARS_N[v]))); ax.plot([lo, hi], [i + o] * 2, color=col, lw=1.1); ax.plot(e, i + o, marker=mk, mfc=col if cr else "white", mec=col, ms=5, mew=1.0, ls="none")
-        if e >= 1: ax.text(hi + 0.002, i + o, H3(e), ha="left", va="center", fontsize=7, color=col, bbox=dict(fc="white", ec="none", pad=0.4), zorder=5)
+        if e >= N["main"][v][0]: ax.text(hi + 0.002, i + o, H3(e), ha="left", va="center", fontsize=7, color=col, bbox=dict(fc="white", ec="none", pad=0.4), zorder=5)
         else: ax.text(lo - 0.002, i + o, H3(e), ha="right", va="center", fontsize=7, color=col, bbox=dict(fc="white", ec="none", pad=0.4), zorder=5)
     pm = N["main"][v][0]; ax.plot([pm, pm], [i - 0.46, i + 0.46], color="#000000", lw=1.1, ls="--")
 ax.axvline(1, color="#404040", lw=1.0, ls=":"); ax.set_yticks(range(len(ORD))); ax.set_yticklabels([LAB[v] for v in ORD]); ax.invert_yaxis()
