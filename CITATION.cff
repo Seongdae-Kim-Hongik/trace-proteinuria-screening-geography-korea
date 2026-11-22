@@ -7,15 +7,15 @@ authors:
     given-names: Seongdae
     affiliation: Hongik University
     orcid: "https://orcid.org/0000-0002-1525-0091"
-version: "1.0.4"
+version: "1.0.5"
 date-released: 2026-11-22
 license: MIT
 repository-code: "https://github.com/Seongdae-Kim-Hongik/trace-proteinuria-screening-geography-korea"
-doi: "10.5281/zenodo.24440840"
+doi: "10.5281/zenodo.24442318"
 identifiers:
   - type: doi
     value: "10.5281/zenodo.24419401"
     description: "Concept DOI (all versions)"
   - type: doi
-    value: "10.5281/zenodo.24440840"
-    description: "Version 1.0.4"
+    value: "10.5281/zenodo.24442318"
+    description: "Version 1.0.5"

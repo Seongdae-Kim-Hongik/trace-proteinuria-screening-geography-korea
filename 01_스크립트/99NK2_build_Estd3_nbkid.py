@@ -38,7 +38,8 @@ for suf, code in OUTS.items():
     for s in SEXES: assert (abs(NUM[suf].xs(s, level="sex").sum(1) - bt.xs(s, level="sex")) <= 1).all(), (suf, s)
     RATE[suf] = NUM[suf] / EX
 print("[99NK2] 전국 의심률(%, 성 합) 연도별:", (100 * NUM[""].groupby(level="year").sum().sum(1) / EX.groupby(level="year").sum().sum(1)).round(2).to_dict())
-base = pd.read_csv(os.path.join(AN, "PERIO", "panel_PERIO.csv"), encoding="utf-8-sig"); base["fbd_region"] = base.fbd_region.map(NFC); base["key"] = base.key.map(NFC)
+base = pd.read_parquet(os.path.join(PAN, "MASTER_시군구_연도_wide.parquet"), columns=["year", "key", "fbd_region"]); base["fbd_region"] = base.fbd_region.map(NFC); base["key"] = base.key.map(NFC)
+base = base[base.year.isin(YEARS)].sort_values(["key", "year"]).reset_index(drop=True)
 base = base[["year", "key", "fbd_region"]].drop_duplicates()
 PKEYS = set(base.key); SIDO_HDR = {k for k in cw.SIDO_STD if len(k) >= 3 and (k.endswith("시") or k.endswith("도"))}
 FIVE = [f"{lo}-{lo+4}세" for lo in range(0, 85, 5)]; OLD85 = ["85-89세", "90-94세", "95-99세", "100세 이상"]

@@ -26,7 +26,7 @@ N["sir_top"] = [[r, round(v, 2)] for r, v in L.sort_values(ascending=False).head
 P["dens"] = P.population / (P.area_m2 / 1e6)
 D = P.groupby("fbd_region").agg(wk=("walking_practice_rate_raw", "mean"), up=("screening_uptake_raw", "mean"), dens=("dens", "mean"), p80=("pop80_share_raw", "mean"), bl=("basic_livelihood_rate_raw", "mean"), ht=("screening_suspected_hypertension_share_v_raw", "mean"), tp=("annual_mean_temperature_v_raw", "mean"), urb=("urban_population_share_raw", "mean"))
 N["rho_bl_dens"] = round(spearmanr(D.bl, D.dens).correlation, 2); N["rho_bl_up"] = round(spearmanr(D.bl, D.up).correlation, 2); N["rho_bl_p80"] = round(spearmanr(D.bl, D.p80).correlation, 2)
-N["rho_sir_bl"] = round(spearmanr(L.reindex(D.index), D.bl).correlation, 2); N["rho_sir_up"] = round(spearmanr(L.reindex(D.index), D.up).correlation, 2); N["rho_sir_urb"] = round(spearmanr(L.reindex(D.index), D.urb).correlation, 2); N["rho_sir_ht"] = round(spearmanr(L.reindex(D.index), D.ht).correlation, 2)
+N["rho_sir_bl"] = round(spearmanr(L.reindex(D.index), D.bl).correlation, 2); N["rho_sir_up"] = round(spearmanr(L.reindex(D.index), D.up).correlation, 2); N["rho_sir_urb"] = round(spearmanr(L.reindex(D.index), D.urb).correlation, 2); _rng = np.random.default_rng(20261019); _x = L.reindex(D.index).values; _u = D.urb.values; _bs = [spearmanr(_x[_i], _u[_i]).correlation for _i in (_rng.integers(0, len(_x), len(_x)) for _ in range(2000))]; N["rho_sir_urb_ci"] = [round(float(np.percentile(_bs, 2.5)), 2), round(float(np.percentile(_bs, 97.5)), 2)]; N["rho_sir_ht"] = round(spearmanr(L.reindex(D.index), D.ht).correlation, 2)
 WIN = {"2011-2015": (2011, 2015), "2016-2019": (2016, 2019), "2020-2024": (2020, 2024), "2011-2024": (2011, 2024)}
 DESC = {**VARS, **{k: v for k, v in SVARS.items() if k != "scr_obesity"}}
 raw = {k: (DESC[k] + "_raw") for k in DESC}; assert all(c in P for c in raw.values()), [c for c in raw.values() if c not in P]
@@ -128,6 +128,11 @@ N["int"] = {f"{r.cov}|{r.window}": [round(float(r.IRR_ratio), 3), round(float(r.
 S60 = pd.read_csv(os.path.join(RS(), "S60_extra.csv")); INV = {**{v: k for k, v in VARS.items()}, **{v: k for k, v in SVARS.items()}}
 N["s60"] = {a: {INV.get(r.cov, r.cov): [round(float(r.IRR), 3), round(float(r.lo), 3), round(float(r.hi), 3)] for r in g.itertuples()} for a, g in S60.groupby("analysis")}
 N["s60_waic"] = {a: round(float(g.WAIC.iloc[0]), 1) for a, g in S60.groupby("analysis")}
+def _pairs(g):
+    L = open(g).read().split("\n")[1:]; return sum(int(l.split()[1]) for l in L if l.strip()) // 2
+N["graph_pairs"] = _pairs(os.path.join(B, "graph_593.graph")); N["graph_pairs_q"] = _pairs(os.path.join(B, "results_s577", "nb_NBKID.graph"))
+import re as _re
+N["splus_k"] = int(_re.search(r"K (\d+)", open(os.path.join(B, "run_std3_88gprep.log")).read()).group(1))
 json.dump(N, open(os.path.join(HERE, "numbers_nbkid.json"), "w"), ensure_ascii=False, indent=1, default=float)
 if __name__ == "__main__":
     print({k: N[k] for k in ("cases_total_m", "exam_total_m", "rate", "sir_p10", "sir_p90", "p90p10", "gi_hot", "gi_cold", "gi_hot_sido", "gi_cold_sido", "hc", "kendall_w", "rho_2011_2024", "moran_min", "moran_max", "rm_spec", "vp", "ppc95", "oos_cov", "evalue", "rho_bl_dens", "rho_sir_urb", "rho_sir_bl")})

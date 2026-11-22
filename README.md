@@ -2,13 +2,13 @@
 
 Analysis code for a study of where the "normal B (borderline), kidney-function management" judgement (urine dipstick protein trace) is concentrated across the 229 districts of South Korea at the national general health screening, 2011-2024, and whether district kidney risk factors explain the pattern.
 
-This code is released under the MIT licence. Version 1.0.4. An archived copy of each version is deposited on Zenodo (version 1.0.4: https://doi.org/10.5281/zenodo.24440840; all versions: concept record https://doi.org/10.5281/zenodo.24419401).
+This code is released under the MIT licence. Version 1.0.5. An archived copy of each version is deposited on Zenodo (version 1.0.5: https://doi.org/10.5281/zenodo.24442318; all versions: concept record https://doi.org/10.5281/zenodo.24419401).
 
 ## Model
 
 The principal model (`S1_narrative_full`, version `std3`) contains 9 hypothesised district characteristics (screening-measured suspected diabetes share, current smoking, high-risk drinking, treatment rates among adults with diagnosed hypertension and diabetes, farm-household population share, public assistance recipient rate, screening uptake, walking) and 5 fixed adjustments (urban population share, physicians, sex ratio, fiscal independence, share aged 80 or older), with a BYM2 spatial term, a first-order random walk in time and an unstructured year term (negative binomial likelihood, offset = log expected count).
 
-Set choice. `81_fit_inla.R` (step S2) fits every candidate set in `sets_NBKID_std3.json` with the forced adjustments and applies the rule coded there and recorded in the settings file (`rules.set_choice`): lowest WAIC; within 4 WAIC points, the set with fewer hypothesised characteristics (ties by LCPO). Under this rule the 5-characteristic core set `S2_core` (suspected diabetes share, hypertension treatment rate, public assistance recipient rate, screening uptake, walking; WAIC 45,000.9) would have been chosen over the full set (WAIC 45,009.7). The principal model was fixed before fitting to the full 9-characteristic set `S1_narrative_full` (`rules.main_model_note`, read as `main_set` by `_st_config.py`; `81_fit_inla.R` then overrides the rule-selected set and writes both, `best_set` and `rule_best_set`, to `HM_best_NBKID_std3.txt`). `S2_core` and the other candidate sets are reported as sensitivity sets.
+Set choice. `81_fit_inla.R` (step S2) fits every candidate set in `sets_NBKID_std3.json` with the forced adjustments and applies the rule coded there and recorded in the settings file (`rules.set_choice`): lowest WAIC; within 4 WAIC points, the set with fewer hypothesised characteristics (ties by LCPO). Under this rule the lowest WAIC was that of `S2_core` (5 characteristics: suspected diabetes share, hypertension treatment rate, public assistance recipient rate, screening uptake, walking; WAIC 45,004.2); `S5_work_deprivation` (2 characteristics: farm-household population share, public assistance recipient rate; WAIC 45,006.3) lies within 4 WAIC points with fewer characteristics, so the rule would have chosen `S5_work_deprivation`. The principal model is the full 9-characteristic set `S1_narrative_full` (WAIC 45,009.9), fixed and hashed before the reported (v5) models were fitted (earlier sets were revised after collinearity, series-break and data-quality checks; `rules.main_model_note`, read as `main_set` by `_st_config.py`; `81_fit_inla.R` then overrides the rule-selected set and writes both, `best_set` and `rule_best_set`, to `HM_best_NBKID_std3.txt`). `S5_work_deprivation`, `S2_core` and the other candidate sets are reported as sensitivity sets.
 
 Sensitivity analyses only (never in the principal model): annual mean temperature, screening-measured suspected hypertension share, survey obesity rate and the period-standardised screening obesity-management share, each added one at a time (`88V_nbkid_extra.R`); refits without Sejong, without the districts with boundary changes (Sejong, Cheongju, Gunwi), without 2020-2021 and from 2015; BYM2 mixing-parameter priors Beta(1,1) and Jeffreys Beta(0.5,0.5) in place of the PC prior. Further sensitivity versions and the full sensitivity suite are listed below.
 
@@ -21,7 +21,7 @@ This repository contains code only. No data, adjacency graph, boundary file, res
 | Path | What it is |
 |---|---|
 | `01_스크립트/` | Analysis scripts and `_var_labels.json` (variable labels) |
-| `04_분석/NBKID/` | Covariate pool builder, settings writer (`make_pool_sets_nbkid.py`), model settings fixed before fitting (`sets_NBKID_std3.json` principal; `s577` queen contiguity graph, `s2` without the share aged 80 or older, `s8` age-only standardised expected counts, `sc` unstandardised expected counts, `sp` population-based expected counts) and the two run scripts |
+| `04_분석/NBKID/` | Covariate pool builder, settings writer (`make_pool_sets_nbkid.py`), model settings fixed and hashed before the reported models were fitted (`sets_NBKID_std3.json` principal; `s577` queen contiguity graph, `s2` without the share aged 80 or older, `s8` age-only standardised expected counts, `sc` unstandardised expected counts, `sp` population-based expected counts) and the two run scripts |
 | `04_분석/NBKID/MS/build/` | `numbers_nbkid.py` (every number in the manuscript) and `figs_nbkid.py` (Figures 1-3) |
 | `DATA_DICTIONARY.md` | Variables, units and sources |
 | `OUTPUT_MAP.md` | Which script writes which output table |
@@ -49,13 +49,23 @@ Run from `ST_ROOT` after setting the environment variables above.
 | Step | Script | Output |
 |---|---|---|
 | 1 | `01_스크립트/99G_nbkid_fetch_N064.py`, `99G_nbkid_judgement_gate.py` | Judgement check: published judgement versus the published urine dipstick distribution by year, sex, age and province; year-to-year district rank correlation |
-| 2 | `01_스크립트/99NK2_build_Estd3_nbkid.py` (district key and master panel from `40_region_crosswalk.py`, `50_build_master_panel.py`; resident population from `ST_FBDZIP`) | District counts (code-based linkage; Sejong from province rows) and expected counts by indirect standardisation in 2 sexes x 15 age groups |
-| 3 | `04_분석/NBKID/build_pool_from_sqlite_nbkid.py`, `make_pool_sets_nbkid.py` | Covariate pool read from the reference district-year dataset; model settings `sets_NBKID_*.json`, fixed (and hashed) before any covariate model was fitted |
+| 2 | `01_스크립트/99NK2_build_Estd3_nbkid.py` (district key list read from the master panel `02_패널/MASTER_시군구_연도_wide.parquet` written by `50_build_master_panel.py`, with codes from `40_region_crosswalk.py`; resident population from `ST_FBDZIP`; share aged 80 or older from `02_패널/HTND_Estd2.csv`, see Inputs) | District counts (code-based linkage; Sejong from province rows) and expected counts by indirect standardisation in 2 sexes x 15 age groups |
+| 3 | `04_분석/NBKID/build_pool_from_sqlite_nbkid.py`, `make_pool_sets_nbkid.py` | Covariate pool read from the reference district-year dataset; model settings `sets_NBKID_*.json`, fixed and hashed before the reported (v5) models were fitted; earlier sets were revised after collinearity, series-break and data-quality checks |
 | 4 | `04_분석/NBKID/run_A_gate.sh` (`80_build_disease_panel_v.py`) | Analytic panel and optional data checks |
 | 5 | `04_분석/NBKID/run_std3_chain.sh` (`81_fit_inla.R`, `81R_nbkid_refit_binom.R`, `85_window_maps.R`, `86_yearly_maps_ehsa.py`, `87_window_grid.py`, `88g_sens_prep.py`, `88g_sens_suite.R`, `88h_ppc_varpart.R`, `88k_struct_kh.R`, `88k_struct_kh_anem.R`, `89g_sens_combine_nbkid.py`) | Principal model, 200-subset multiverse, period models, Knorr-Held models, restricted spatial regression, Spatial+, alternative specifications, sensitivity versions (s577, s2, s8, sc, sp) |
 | 6 | `01_스크립트/88S_nbkid_reverse_posthoc.R` | Post hoc analyses of the association opposite to the prespecified direction |
 | 7 | `01_스크립트/88V_nbkid_extra.R` | Additional sensitivity analyses: sensitivity-only variables added one at a time, district and year exclusions, mixing-parameter priors (`S60_extra.csv`) |
 | 8 | `04_분석/NBKID/MS/build/numbers_nbkid.py`, `figs_nbkid.py` | Every number reported in the manuscript (`numbers_nbkid.json`) and Figures 1-3 |
+
+## Inputs not written by this repository
+
+| File (under `ST_ROOT`) | Read by | Content |
+|---|---|---|
+| `02_패널/HTND_Estd2.csv` | `99NK2_build_Estd3_nbkid.py` | `pop80_share_raw`, district share of residents aged 80 or older by year (resident registration statistics), used as a fixed adjustment |
+| `04_분석/KIDS/panel_KIDS.csv`, `02_패널/KIDS_Estd.csv` | `make_pool_sets_nbkid.py` (check only), `88g_sens_prep.py`, `numbers_nbkid.py` | Comparison outcome: examinees judged suspected kidney disease, district counts and expected counts (KOSIS NHIS screening tables) |
+| `04_분석/NBBP/panel_NBBP.csv`, `02_패널/NBBP_Estd.csv` | as above | Comparison outcome: examinees judged normal B, blood-pressure management, district counts and expected counts |
+
+The comparison outcomes enter only the negative-control-outcome sensitivity analysis and the district SIR correlations reported in the manuscript; they are built in the same way as the NBKID counts and expected counts (step 2) from their own KOSIS tables.
 
 Expected counts and offsets use no added constant (offset = log E; the panel has no zero counts).
 

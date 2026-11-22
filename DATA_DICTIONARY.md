@@ -40,4 +40,4 @@ Principal covariate set `S1_narrative_full` = the 10 covariates above; fixed adj
 
 Source tables for the outcome (KOSIS): DT_35007_N101 (district, by sex), DT_35007_N098 (district examinees judged), DT_35007_N099 and DT_35007_N102 (national, by sex and age), DT_35007_N064 and DT_35007_N065 (urine dipstick protein distribution, judgement check). Judgement criteria: Ministry of Health and Welfare notice on the general health screening, annexed tables (2014, 2017 and 2024 editions); urine dipstick trace is the only component of this judgement.
 
-Full labels (English and Korean) for all columns: `01_스크립트/_var_labels.json`.
+Labels (English and Korean) for the 27 source columns used by this analysis: `01_스크립트/_var_labels.json`.
