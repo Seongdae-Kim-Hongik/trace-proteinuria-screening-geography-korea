@@ -22,4 +22,4 @@ Result tables are written to `04_분석/NBKID/results_<version>/` (principal ver
 | `89g_sens_combine_nbkid.py` | S41_retention_by_cov.csv, S41_noise_rubin.csv, S41_nco_detail.csv, S41_evalues.csv, S41_leaveout_ranges.csv | Sensitivity summary |
 | `numbers_nbkid.py` | MS/build/numbers_nbkid.json, gi_nbkid.csv | Every number in the manuscript and supplementary tables |
 | `figs_nbkid.py` | MS/build/figs/Fig1-Fig3 | Figures 1-3 |
-| `04_분석/NBKID/checks/B240_person_axis.py` | `checks/out/B240_person_axis_*.csv`, `MS/build/person_axis_nbkid.json` | National sex and age rates, sex-by-age rate ratios and the directly age-standardised rate (2015 examinee standard) reported in Results, Table 1 and Table S1 |
+| `04_분석/NBKID/checks/person_axis_nbkid.py` | `checks/out/person_axis_*.csv`, `MS/build/person_axis_nbkid.json` | National sex and age rates, sex-by-age rate ratios and the directly age-standardised rate (2015 examinee standard) reported in Results, Table 1 and Table S1 |

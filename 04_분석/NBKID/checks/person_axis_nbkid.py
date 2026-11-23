@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-# B240/B240b(2026-11-22 r4): 인적 축. 99NK2와 같은 원표(KOSIS DT_35007_N099 '계' 판정 수검자 = 분모, DT_35007_N102 00307 신장기능관리 = 분자), 성×15연령.
-#  ① 성×연령군(5군) 판정률·발생률비(기준 = 여자 45–64세, 같은 기간 Poisson 비, Wald 95% CI) ② 15연령 시기별 /10만 수검자 ③ 조율·직접 연령표준화율
-#  (표준 = 2015년 전국 판정 수검자 성×15연령 구성, B286과 같음). 모형 적합 없음. 산출: checks/out/B240_person_axis_*.csv·.md, MS/build/person_axis_nbkid.json
+# person_axis_nbkid.py: national sex and age description of the trace judgement. Source tables as for the expected counts (KOSIS DT_35007_N099 examinees judged = denominator, DT_35007_N102 group 00307 = numerator), 2 sexes x 15 age bands.
+#  (1) sex x age-group (5 groups) rates and rate ratios (reference women 45-64 years, Poisson ratio within period, Wald 95% CI); (2) rates per 100,000 examinees by 15 age bands and period; (3) crude and directly age-standardised rates.
+#  Standard = 2015 national examinee structure (2 sexes x 15 age bands). No model fitting. Output: checks/out/person_axis_*.csv, MS/build/person_axis_nbkid.json
 import os, json, numpy as np, pandas as pd
-def keep(x, nd=None):   # 반올림하지 않고 저장(원고 표기에서 Decimal half-up 한 번, B342)
+def keep(x, nd=None):   # values are stored unrounded; rounding happens once (Decimal half-up) when the manuscript is built
     return float(x)
 HERE = os.path.dirname(os.path.abspath(__file__)); NB = os.path.dirname(HERE); SK = os.path.dirname(os.path.dirname(NB))
 SRC = os.path.join(SK, "00_원천", "C_NHIS_검진보험"); OUT = os.path.join(HERE, "out")
@@ -67,10 +67,10 @@ for y in YEARS:
     r3.append(dict(period=str(y), cases=int(g.case.sum()), examinees=int(g.exam.sum()), crude_per100k=keep(1e5 * g.case.sum() / g.exam.sum(), 1),
                    asr_per100k=keep(1e5 * float((rt * W).sum()), 1), asr_lo=np.nan, asr_hi=np.nan, standard="2015 national examinee population, sex x 15 age bands (KOSIS DT_35007_N099)"))
 T3 = pd.DataFrame(r3)
-T1.to_csv(os.path.join(OUT, "B240_person_axis_sex_age_IRR.csv"), index=False, encoding="utf-8-sig")
-T1b.to_csv(os.path.join(OUT, "B240_person_axis_sex_IRR.csv"), index=False, encoding="utf-8-sig")
-T2.to_csv(os.path.join(OUT, "B240_person_axis_age_period_per100k.csv"), index=False, encoding="utf-8-sig")
-T3.to_csv(os.path.join(OUT, "B240_person_axis_crude_ASR.csv"), index=False, encoding="utf-8-sig")
+T1.to_csv(os.path.join(OUT, "person_axis_sex_age_IRR.csv"), index=False, encoding="utf-8-sig")
+T1b.to_csv(os.path.join(OUT, "person_axis_sex_IRR.csv"), index=False, encoding="utf-8-sig")
+T2.to_csv(os.path.join(OUT, "person_axis_age_period_per100k.csv"), index=False, encoding="utf-8-sig")
+T3.to_csv(os.path.join(OUT, "person_axis_crude_ASR.csv"), index=False, encoding="utf-8-sig")
 # json
 J = {"source": "KOSIS DT_35007_N099 (examinees, '계') and DT_35007_N102 grp 00307 (renal-function management), national, sex x 15 age bands, 2011-2024",
      "standard": "2015 national general health-screening examinee population, sex x 15 age bands (direct standardisation)",

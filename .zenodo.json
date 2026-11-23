@@ -1,7 +1,7 @@
 {
  "title": "Do kidney risk factors explain why trace dipstick proteinuria clusters in the central urban districts of Korea? — analysis code",
  "upload_type": "software",
- "version": "1.0.9",
+ "version": "1.0.10",
  "license": "MIT",
  "creators": [
   {
@@ -21,7 +21,7 @@
  "access_right": "open",
  "related_identifiers": [
   {
-   "identifier": "https://github.com/Seongdae-Kim-Hongik/trace-proteinuria-screening-geography-korea/tree/v1.0.9",
+   "identifier": "https://github.com/Seongdae-Kim-Hongik/trace-proteinuria-screening-geography-korea/tree/v1.0.10",
    "relation": "isSupplementTo",
    "scheme": "url"
   }
